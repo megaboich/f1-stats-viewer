@@ -1,10 +1,11 @@
 import * as React from "react";
 
-import { IF1DataRecord } from "model/f1-data-record";
 import { F1DataService } from "services/f1-data.service";
+import { IF1SeasonInfo } from "services/models";
 
 interface IAppState {
-  f1Data?: IF1DataRecord[];
+  f1Data?: IF1SeasonInfo[];
+  selectedSeason?: IF1SeasonInfo;
 }
 
 export class App extends React.Component<{}, IAppState> {
@@ -16,7 +17,10 @@ export class App extends React.Component<{}, IAppState> {
   }
 
   public async componentDidMount() {
-    const data = await this.dataService.getData();
+    const data = await this.dataService.getSeasons({
+      maxYear: 2015,
+      minYear: 2000
+    });
     this.setState({ f1Data: data });
   }
 
@@ -35,18 +39,24 @@ export class App extends React.Component<{}, IAppState> {
         <div className="section">
           <div className="container">
             {this.state.f1Data && (
-              <table className="table">
+              <table className="table is-hoverable">
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Date</th>
+                    <th>Season</th>
+                    <th>Winner</th>
                   </tr>
                 </thead>
                 <tbody>
                   {this.state.f1Data.map(rec => (
-                    <tr key={rec.name}>
-                      <td>{rec.name}</td>
-                      <td>{rec.date}</td>
+                    <tr
+                      key={rec.year}
+                      className={
+                        this.state.selectedSeason === rec ? "is-selected" : ""
+                      }
+                      onClick={this.handleSeasonSelection(rec)}
+                    >
+                      <td>{rec.year}</td>
+                      <td>{rec.winner}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -56,5 +66,9 @@ export class App extends React.Component<{}, IAppState> {
         </div>
       </div>
     );
+  }
+
+  private handleSeasonSelection(season: IF1SeasonInfo) {
+    return () => this.setState({ selectedSeason: season });
   }
 }
