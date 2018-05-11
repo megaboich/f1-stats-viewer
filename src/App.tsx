@@ -1,10 +1,13 @@
 import * as React from "react";
-
 import { F1DataService } from "services/f1-data.service";
-import { IF1SeasonInfo } from "services/models";
+import { IF1RaceInfo, IF1SeasonInfo } from "services/models";
+import { ProgressComponentComponent } from "ui/generic/progress.component";
+import { RacesGridComponent } from "ui/races-grid.component";
+import { SeasonsGridComponent } from "ui/seasons-grid.component";
 
 interface IAppState {
-  f1Data?: IF1SeasonInfo[];
+  seasons?: IF1SeasonInfo[];
+  races?: IF1RaceInfo[];
   selectedSeason?: IF1SeasonInfo;
 }
 
@@ -17,11 +20,7 @@ export class App extends React.Component<{}, IAppState> {
   }
 
   public async componentDidMount() {
-    const data = await this.dataService.getSeasons({
-      maxYear: 2015,
-      minYear: 2000
-    });
-    this.setState({ f1Data: data });
+    await this.loadSeasons();
   }
 
   public render() {
@@ -38,37 +37,58 @@ export class App extends React.Component<{}, IAppState> {
         </nav>
         <div className="section">
           <div className="container">
-            {this.state.f1Data && (
-              <table className="table is-hoverable">
-                <thead>
-                  <tr>
-                    <th>Season</th>
-                    <th>Winner</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.state.f1Data.map(rec => (
-                    <tr
-                      key={rec.year}
-                      className={
-                        this.state.selectedSeason === rec ? "is-selected" : ""
+            <div className="columns">
+              <div className="column is-one-third">
+                {this.state.seasons ? (
+                  <SeasonsGridComponent
+                    seasons={this.state.seasons}
+                    selectedSeason={this.state.selectedSeason}
+                    onSelectionChange={season =>
+                      this.handleSeasonSelection(season)
+                    }
+                  />
+                ) : (
+                  <ProgressComponentComponent />
+                )}
+              </div>
+              <div className="column">
+                {this.state.selectedSeason ? (
+                  this.state.races ? (
+                    <RacesGridComponent
+                      races={this.state.races}
+                      highlightDriverId={
+                        this.state.selectedSeason.winnerDriverId
                       }
-                      onClick={this.handleSeasonSelection(rec)}
-                    >
-                      <td>{rec.year}</td>
-                      <td>{rec.winner}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+                    />
+                  ) : (
+                    <ProgressComponentComponent />
+                  )
+                ) : (
+                  <p />
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
     );
   }
 
-  private handleSeasonSelection(season: IF1SeasonInfo) {
-    return () => this.setState({ selectedSeason: season });
+  private async loadSeasons() {
+    const seasons = await this.dataService.getSeasons({
+      maxYear: 2015,
+      minYear: 2000
+    });
+    this.setState({ seasons });
+  }
+
+  private async loadRaces(seasonYear: number) {
+    const races = await this.dataService.getRaces({ seasonYear });
+    this.setState({ races });
+  }
+
+  private async handleSeasonSelection(season: IF1SeasonInfo) {
+    this.setState({ selectedSeason: season });
+    await this.loadRaces(season.year);
   }
 }

@@ -1,4 +1,4 @@
-import { IF1SeasonInfo } from "./models";
+import { IF1RaceInfo, IF1SeasonInfo } from "./models";
 
 export class F1DataService {
   public async getSeasons(options: {
@@ -31,6 +31,32 @@ export class F1DataService {
     throw new Error("Error occured during retrieving data from server");
   }
 
+  public async getRaces(options: {
+    seasonYear: number;
+  }): Promise<IF1RaceInfo[]> {
+    const response = await fetch(
+      `http://ergast.com/api/f1/${
+        options.seasonYear
+      }/results/1.json?limit=1000000`
+    );
+    if (response.ok) {
+      const rawJson = await response.json();
+      if (
+        !rawJson.MRData ||
+        !rawJson.MRData.RaceTable ||
+        !rawJson.MRData.RaceTable.Races ||
+        !rawJson.MRData.RaceTable.Races.length
+      ) {
+        throw new Error("Invalid JSON data received from server");
+      }
+
+      const allRawRecords = rawJson.MRData.RaceTable.Races as any[];
+      const allRaces = allRawRecords.map(record => this.dtoToRaceInfo(record));
+      return allRaces;
+    }
+    throw new Error("Error occured during retrieving data from server");
+  }
+
   private dtoToSeasonInfo(dto: any): IF1SeasonInfo {
     if (
       !dto ||
@@ -40,14 +66,46 @@ export class F1DataService {
     ) {
       throw new Error("Invalid JSON data received from server");
     }
-    const driverInfo = dto.DriverStandings[0].Driver;
-    if (!driverInfo || !driverInfo.givenName || !driverInfo.familyName) {
+    const driverDetails = this.getDriverDetailsFromDto(dto.DriverStandings[0].Driver);
+    return {
+      winnerDriverFullName: driverDetails.fullName,
+      winnerDriverId: driverDetails.id,
+      year: parseInt(dto.season, 10),
+    };
+  }
+
+  private dtoToRaceInfo(dto: any): IF1RaceInfo {
+    if (
+      !dto ||
+      !dto.raceName ||
+      !dto.date ||
+      !dto.Results ||
+      !dto.Results.length
+    ) {
       throw new Error("Invalid JSON data received from server");
     }
-    const fullName = driverInfo.givenName + " " + driverInfo.familyName;
+    const driverDetails = this.getDriverDetailsFromDto(dto.Results[0].Driver);
     return {
-      winner: fullName,
-      year: parseInt(dto.season, 10)
+      date: dto.date,
+      raceName: dto.raceName,
+      winnerDriverFullName: driverDetails.fullName,
+      winnerDriverId: driverDetails.id
+    };
+  }
+
+  private getDriverDetailsFromDto(
+    driverInfoDto: any
+  ): { fullName: string; id: string } {
+    if (
+      !driverInfoDto ||
+      !driverInfoDto.givenName ||
+      !driverInfoDto.familyName
+    ) {
+      throw new Error("Invalid JSON data received from server");
+    }
+    return {
+      fullName: driverInfoDto.givenName + " " + driverInfoDto.familyName,
+      id: driverInfoDto.driverId
     };
   }
 }

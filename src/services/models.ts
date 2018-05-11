@@ -1,10 +1,12 @@
 export interface IF1SeasonInfo {
   year: number;
-  winner: string;
+  winnerDriverFullName: string;
+  winnerDriverId: string;
 }
 
 export interface IF1RaceInfo {
-  year: number;
-  winner: string;
-  place: string;
+  raceName: string;
+  date: string;
+  winnerDriverFullName: string;
+  winnerDriverId: string;
 }
