@@ -1,5 +1,6 @@
 {
   "name": "f1-stats-viewer",
+  "homepage": "https://megaboich.github.io/f1-stats-viewer/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -13,13 +14,16 @@
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
     "@types/jest": "^22.2.3",
     "@types/node": "^10.0.6",
     "@types/react": "^16.3.14",
     "@types/react-dom": "^16.0.5",
+    "gh-pages": "^1.1.0",
     "typescript": "^2.8.3"
   }
 }

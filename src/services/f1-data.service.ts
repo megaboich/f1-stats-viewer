@@ -1,12 +1,14 @@
 import { IF1RaceInfo, IF1SeasonInfo } from "./models";
 
+const APIRoot = "https://ergast.com/api/f1/";
+
 export class F1DataService {
   public async getSeasons(options: {
     minYear: number;
     maxYear: number;
   }): Promise<IF1SeasonInfo[]> {
     const response = await fetch(
-      "http://ergast.com/api/f1/driverStandings/1.json?limit=1000000"
+      APIRoot + "driverStandings/1.json?limit=1000000"
     );
     if (response.ok) {
       const rawJson = await response.json();
@@ -35,9 +37,7 @@ export class F1DataService {
     seasonYear: number;
   }): Promise<IF1RaceInfo[]> {
     const response = await fetch(
-      `http://ergast.com/api/f1/${
-        options.seasonYear
-      }/results/1.json?limit=1000000`
+      APIRoot + `${options.seasonYear}/results/1.json?limit=1000000`
     );
     if (response.ok) {
       const rawJson = await response.json();
@@ -66,11 +66,13 @@ export class F1DataService {
     ) {
       throw new Error("Invalid JSON data received from server");
     }
-    const driverDetails = this.getDriverDetailsFromDto(dto.DriverStandings[0].Driver);
+    const driverDetails = this.getDriverDetailsFromDto(
+      dto.DriverStandings[0].Driver
+    );
     return {
       winnerDriverFullName: driverDetails.fullName,
       winnerDriverId: driverDetails.id,
-      year: parseInt(dto.season, 10),
+      year: parseInt(dto.season, 10)
     };
   }
 
