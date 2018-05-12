@@ -1,4 +1,6 @@
 ### This repository contains a sample implementation of very simple web single page application.
+Demo is deployed here: https://megaboich.github.io/f1-stats-viewer/
+
 #### Main functionality
 1. Shows the list of F1 world champions starting from 2005 until 2015.
 2. Data is retrieved dynamically from public API at https://ergast.com/mrd/

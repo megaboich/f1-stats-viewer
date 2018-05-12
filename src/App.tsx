@@ -34,6 +34,15 @@ export class App extends React.Component<{}, IAppState> {
           <div className="navbar-brand">
             <div className="navbar-item">Formula one statistics viewer</div>
           </div>
+          <div className="navbar-end">
+            <a
+              className="navbar-item"
+              href="https://github.com/megaboich/f1-stats-viewer"
+              target="_blank"
+            >
+              Project on Github
+            </a>
+          </div>
         </nav>
         <div className="section">
           <div className="container">
