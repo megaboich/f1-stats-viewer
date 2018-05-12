@@ -1,3 +1,33 @@
+### This repository contains a sample implementation of very simple web single page application.
+#### Main functionality
+1. Shows the list of F1 world champions starting from 2005 until 2015.
+2. Data is retrieved dynamically from public API at https://ergast.com/mrd/
+3. Clicking on an item shows the list of the winners for every race for the selected year.
+4. When the winner in a race has been the world champion in the same season it is indicated with flag icon.
+
+#### Technologies
+As this is a just very sample application the main goal was to make it as simple as possible (and use some modern tools)
+1. Application initially was created using [Create React App](https://github.com/facebook/create-react-app) template. This allows to hide almost all building toolchain in the `node_modules` folder and get your sources clean.
+2. I do like TypeScript a lot, so [TypeScript React Starter](https://github.com/Microsoft/TypeScript-React-Starter) package was used to set project up.
+3. UI styling - [Bulma CSS](https://github.com/jgthms/bulma/). This just adds some fancy CSS styles out of the box.
+
+#### Architecture
+Almost no architecture at all, just keeping sources organized in folders:
+* `services` - for interfaces and classes providing integration with API.
+* `ui` - for React components.
+* `ui/generic` - for generic UI components that are not specific for this application (and could be easily separated to own components library to be shared across several project for example).
+
+#### What I like in this implementation
+Incredibly fast in implementation and simple, almost all magic is hidden behind [Create React App](https://github.com/facebook/create-react-app) scripts. You can follow the tutorial and create this app in 1 hour.
+
+#### What I would like to improve in this project if it grows and expands further
+1. React application state management - depends on requirements, there are lots of possibilities like [MobX](https://github.com/mobxjs/mobx), [Redux](https://github.com/reduxjs/redux) or something custom using [RxJS](https://github.com/ReactiveX/RxJS)
+2. Routing
+3. Get rid of [Create React App](https://github.com/facebook/create-react-app). While providing lots of magic out of the box at the very first moment it becomes a burden later. Some stuff could be removed, reorganized and tailored to best fit a particular needs/wishes of a team.
+4. Unit tests
+
+------ Here goes original README from [Create React App](https://github.com/facebookincubator/create-react-app) ------
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
